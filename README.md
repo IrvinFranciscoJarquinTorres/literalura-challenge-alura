@@ -20,7 +20,7 @@ LiteraLura es una aplicación de catálogo de libros que permite buscar, registr
 - Filtrar libros por idioma
 - Top 10 libros más descargados
 - Estadísticas de descargas
-- Interfaz web con portadas en http://localhost:8080
+- Interfaz web con portadas en el puerto 8080
 
 ## 🛠️ Tecnologías
 
