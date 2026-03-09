@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar - LiteraLura</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-content">
+        <a href="/" class="nav-logo">📚 LiteraLura</a>
+        <div class="nav-links">
+            <a th:href="@{/}" class="nav-link">Inicio</a>
+            <a th:href="@{/autores}" class="nav-link">Autores</a>
+            <a th:href="@{/top10}" class="nav-link">🏆 Top 10</a>
+        </div>
+    </div>
+</nav>
+
+<main class="buscar-page">
+    <div class="container">
+        <h2>🔍 Resultados para: <em th:text="${busqueda}">título</em></h2>
+
+        <form action="/buscar" method="get" class="search-form search-form-inline">
+            <input type="text" name="titulo" th:value="${busqueda}" placeholder="Nueva búsqueda..." class="search-input">
+            <button type="submit" class="search-btn">Buscar</button>
+        </form>
+
+        <section th:if="${libros != null}">
+            <h3>📂 En tu catálogo (<span th:text="${totalResultados}">0</span> resultado(s))</h3>
+            <div th:if="${#lists.isEmpty(libros)}" class="empty-state-small">
+                <p>No hay resultados en tu catálogo local.</p>
+            </div>
+            <div th:if="${!#lists.isEmpty(libros)}" class="libros-grid">
+                <div th:each="libro : ${libros}" class="libro-card">
+                    <a th:href="@{/libro/{id}(id=${libro.id})}">
+                        <div class="portada-container">
+                            <img th:if="${libro.portadaUrl != null}" th:src="${libro.portadaUrl}"
+                                 th:alt="${libro.titulo}" class="portada"
+                                 onerror="this.src='/images/default-book.svg'">
+                            <div th:if="${libro.portadaUrl == null}" class="portada-placeholder"><span>📚</span></div>
+                        </div>
+                        <div class="libro-info">
+                            <h3 class="libro-titulo" th:text="${libro.titulo}">Título</h3>
+                            <p class="libro-autor" th:if="${!#lists.isEmpty(libro.autores)}"
+                               th:text="${libro.autores[0].nombre}">Autor</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section th:if="${sugerenciasAPI != null and !#lists.isEmpty(sugerenciasAPI)}" class="sugerencias">
+            <h3>🌐 Sugerencias desde Gutendex API</h3>
+            <p class="sugerencias-info">Estos libros están disponibles en Gutendex. Guárdalos en tu catálogo:</p>
+            <div class="sugerencias-grid">
+                <div th:each="sug : ${sugerenciasAPI}" class="sugerencia-card">
+                    <img th:if="${sug.getPortadaUrl() != null}" th:src="${sug.getPortadaUrl()}"
+                         th:alt="${sug.title}" class="portada-sm"
+                         onerror="this.src='/images/default-book.svg'">
+                    <div th:if="${sug.getPortadaUrl() == null}" class="portada-placeholder-sm">📚</div>
+                    <div class="sug-info">
+                        <h4 th:text="${sug.title}">Título</h4>
+                        <p th:if="${!#lists.isEmpty(sug.authors())}" th:text="${sug.authors()[0].name()}">Autor</p>
+                        <p class="sug-descargas" th:if="${sug.downloadCount() != null}"
+                           th:text="'⬇️ ' + ${#numbers.formatInteger(sug.downloadCount(), 0, 'COMMA')}">Descargas</p>
+                    </div>
+                    <form action="/guardar" method="post" style="margin-top: 8px;">
+                        <input type="hidden" name="titulo" th:value="${sug.title}">
+                        <button type="submit" class="btn-save">💾 Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>📚 LiteraLura — Challenge Alura Latam</p>
+    </div>
+</footer>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

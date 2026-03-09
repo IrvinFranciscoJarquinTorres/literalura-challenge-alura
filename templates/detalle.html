@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${libro.titulo} + ' - LiteraLura'">Detalle - LiteraLura</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-content">
+        <a href="/" class="nav-logo">📚 LiteraLura</a>
+        <div class="nav-links">
+            <a th:href="@{/}" class="nav-link">Inicio</a>
+            <a th:href="@{/autores}" class="nav-link">Autores</a>
+        </div>
+    </div>
+</nav>
+
+<main class="detalle-page">
+    <div class="container">
+        <a href="/" class="back-btn">← Volver al catálogo</a>
+
+        <div th:if="${libro}" class="detalle-content">
+            <div class="detalle-portada">
+                <img th:if="${libro.portadaUrl != null}"
+                     th:src="${libro.portadaUrl}"
+                     th:alt="${libro.titulo}"
+                     class="portada-grande"
+                     onerror="this.src='/images/default-book.svg'">
+                <div th:if="${libro.portadaUrl == null}" class="portada-placeholder-grande">
+                    📚
+                </div>
+            </div>
+
+            <div class="detalle-info">
+                <span class="idioma-tag" th:text="${libro.idioma}">idioma</span>
+                <h1 class="detalle-titulo" th:text="${libro.titulo}">Título</h1>
+
+                <div class="detalle-autores" th:if="${!#lists.isEmpty(libro.autores)}">
+                    <h3>✍️ Autor(es)</h3>
+                    <div th:each="autor : ${libro.autores}" class="autor-item">
+                        <span th:text="${autor.nombre}">Nombre</span>
+                        <small th:if="${autor.anioNacimiento != null}"
+                               th:text="'(' + ${autor.anioNacimiento} + (${autor.anioFallecimiento != null} ? ' - ' + ${autor.anioFallecimiento} : ' - presente') + ')'">
+                            (años)</small>
+                    </div>
+                </div>
+
+                <div class="detalle-stats">
+                    <div class="stat-box" th:if="${libro.numeroDescargas != null}">
+                        <span class="stat-icon">⬇️</span>
+                        <span class="stat-value" th:text="${#numbers.formatInteger(libro.numeroDescargas, 0, 'COMMA')}">0</span>
+                        <span class="stat-label">Descargas</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-icon">🔖</span>
+                        <span class="stat-value" th:text="${libro.idioma}">en</span>
+                        <span class="stat-label">Idioma</span>
+                    </div>
+                    <div class="stat-box" th:if="${libro.gutenbergId != null}">
+                        <span class="stat-icon">🆔</span>
+                        <span class="stat-value" th:text="${libro.gutenbergId}">0</span>
+                        <span class="stat-label">ID Gutenberg</span>
+                    </div>
+                </div>
+
+                <div class="detalle-temas" th:if="${libro.temas != null and libro.temas != ''}">
+                    <h3>🏷️ Temas</h3>
+                    <p th:text="${libro.temas}">Temas</p>
+                </div>
+
+                <div class="detalle-acciones">
+                    <a th:if="${libro.gutenbergId != null}"
+                       th:href="'https://www.gutenberg.org/ebooks/' + ${libro.gutenbergId}"
+                       target="_blank" class="btn-gutenberg">
+                        📖 Leer en Proyecto Gutenberg
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="error-state">
+            <p th:text="${error}">Error</p>
+            <a href="/">Volver al inicio</a>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>📚 LiteraLura — Challenge Alura Latam</p>
+    </div>
+</footer>
+</body>
+</html>

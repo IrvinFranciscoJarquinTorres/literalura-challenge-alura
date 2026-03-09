@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autores - LiteraLura</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-content">
+        <a href="/" class="nav-logo">📚 LiteraLura</a>
+        <div class="nav-links">
+            <a th:href="@{/}" class="nav-link">Inicio</a>
+            <a th:href="@{/autores}" class="nav-link active">Autores</a>
+            <a th:href="@{/top10}" class="nav-link">🏆 Top 10</a>
+        </div>
+    </div>
+</nav>
+
+<main class="autores-page">
+    <div class="container">
+        <h2>✍️ Autores Registrados</h2>
+        <p class="subtitle">Todos los autores en tu catálogo LiteraLura</p>
+
+        <div th:if="${#lists.isEmpty(autores)}" class="empty-state">
+            <div class="empty-icon">✍️</div>
+            <h3>No hay autores registrados</h3>
+            <p><a href="/">Busca libros</a> para agregar autores a tu catálogo.</p>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(autores)}" class="autores-grid">
+            <div th:each="autor : ${autores}" class="autor-card">
+                <div class="autor-avatar">
+                    <span th:text="${#strings.substring(autor.nombre, 0, 1)}">A</span>
+                </div>
+                <div class="autor-datos">
+                    <h3 th:text="${autor.nombre}">Nombre del Autor</h3>
+                    <p th:if="${autor.anioNacimiento != null}">
+                        🎂 Nacimiento: <strong th:text="${autor.anioNacimiento}">XXXX</strong>
+                    </p>
+                    <p th:if="${autor.anioFallecimiento != null}">
+                        🕊️ Fallecimiento: <strong th:text="${autor.anioFallecimiento}">XXXX</strong>
+                    </p>
+                    <p th:if="${autor.anioFallecimiento == null and autor.anioNacimiento != null}">
+                        🌟 <em>Posiblemente aún vivo</em>
+                    </p>
+                    <div class="autor-libros" th:if="${autor.libros != null and !#lists.isEmpty(autor.libros)}">
+                        <p class="libros-count">📚 <span th:text="${#lists.size(autor.libros)}">0</span> libro(s) en catálogo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>📚 LiteraLura — Challenge Alura Latam</p>
+    </div>
+</footer>
+</body>
+</html>

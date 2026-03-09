@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo} ?: 'LiteraLura - Catalogo de Libros'">LiteraLura</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-content">
+        <a href="/" class="nav-logo">📚 LiteraLura</a>
+        <div class="nav-links">
+            <a th:href="@{/}" class="nav-link">Inicio</a>
+            <a th:href="@{/autores}" class="nav-link">Autores</a>
+            <a th:href="@{/top10}" class="nav-link">🏆 Top 10</a>
+        </div>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">📖 LiteraLura</h1>
+        <p class="hero-subtitle">Tu catalogo personal de libros del Proyecto Gutenberg</p>
+
+        <form action="/buscar" method="get" class="search-form">
+            <input type="text" name="titulo" placeholder="Busca un libro por titulo..." class="search-input" required>
+            <button type="submit" class="search-btn">🔍 Buscar</button>
+        </form>
+
+        <div class="hero-actions">
+            <a href="/cargar-populares" class="btn-secondary">🚀 Cargar libros populares</a>
+        </div>
+    </div>
+</header>
+
+<section class="filtros">
+    <div class="container">
+        <h3>Filtrar por idioma:</h3>
+        <div class="idioma-buttons">
+            <a th:href="@{/}" class="idioma-btn active">Todos</a>
+            <a th:href="@{/idioma/en}" class="idioma-btn">🇺🇸 Ingles</a>
+            <a th:href="@{/idioma/es}" class="idioma-btn">🇪🇸 Espanol</a>
+            <a th:href="@{/idioma/fr}" class="idioma-btn">🇫🇷 Frances</a>
+            <a th:href="@{/idioma/de}" class="idioma-btn">🇩🇪 Aleman</a>
+            <a th:href="@{/idioma/pt}" class="idioma-btn">🇧🇷 Portugues</a>
+            <a th:href="@{/idioma/la}" class="idioma-btn">🏛️ Latin</a>
+        </div>
+    </div>
+</section>
+
+<main class="catalogo">
+    <div class="container">
+        <div class="catalogo-header">
+            <h2>📚 Catalogo de Libros</h2>
+            <span class="contador" th:text="${totalLibros} + ' libro(s) registrado(s)'">0 libros</span>
+        </div>
+
+        <div th:if="${#lists.isEmpty(libros)}" class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>No hay libros registrados aun</h3>
+            <p>Busca tu primer libro usando el buscador o carga los libros populares.</p>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(libros)}" class="libros-grid">
+            <div th:each="libro : ${libros}" class="libro-card">
+                <a th:href="@{/libro/{id}(id=${libro.id})}" class="libro-link">
+                    <div class="portada-container">
+                        <img th:if="${libro.portadaUrl != null}"
+                             th:src="${libro.portadaUrl}"
+                             th:alt="${libro.titulo}"
+                             class="portada"
+                             onerror="this.style.display='none'">
+                        <div th:if="${libro.portadaUrl == null}" class="portada-placeholder">
+                            <span>📚</span>
+                        </div>
+                        <div class="idioma-badge" th:text="${libro.idioma}">en</div>
+                    </div>
+                    <div class="libro-info">
+                        <h3 class="libro-titulo" th:text="${libro.titulo}">Titulo</h3>
+                        <p class="libro-autor" th:if="${!#lists.isEmpty(libro.autores)}"
+                           th:text="'✍️ ' + ${libro.autores[0].nombre}">Autor</p>
+                        <p class="libro-descargas" th:if="${libro.numeroDescargas != null}"
+                           th:text="'⬇️ ' + ${#numbers.formatInteger(libro.numeroDescargas, 0, 'COMMA')} + ' descargas'">
+                            Descargas</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>📚 LiteraLura — Proyecto Challenge Alura Latam | Powered by
+            <a href="https://gutendex.com" target="_blank">Gutendex API</a>
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>
